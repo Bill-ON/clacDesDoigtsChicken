@@ -49,15 +49,7 @@ router.put('/', async (req, res) => {
 })
 
 // Updating One
-router.patch('/', async (req, res) => {
-    const chicken = new Chicken({
-        name: req.body.name,
-        birthday: req.body.birthday,
-        weight: req.body.weight,
-        steps: req.body.steps,
-        isRunning: req.body.isRunning
-      })
-    
+router.patch('/', async (req, res) => {   
     try {
         const newchicken = await Chicken.updateOne(
             {$set: {
@@ -83,5 +75,25 @@ router.delete('/', async (req, res) => {
     res.status(500).json({ message: err.message })
   }
 })
+
+router.post('/run', async (req, res) => {   
+    try {
+        const chick = await Chicken.find()
+        chick = chick[0]
+        const newchicken = await Chicken.updateOne(
+            {$set: {
+                name: chick.name,
+                birthday: chick.birthday,
+                weight: chick.weight,
+                steps: chick.steps,
+                isRunning: chick.isRunning
+            }}
+        )
+        res.status(201).json(newchicken)
+      } catch (err) {
+        res.status(500).json({ message: err.message })
+      }    
+})
+
 
 module.exports = router
